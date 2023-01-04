@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.dakudemo.mapper.ReturnApprovalMapper">
+
+    <delete id="deleteReturnApproval" parameterType="Integer" >
+        delete from daku.return_document where id = #{id}
+    </delete>
+
+    <update id="updateReturnApproval" parameterType="com.example.dakudemo.entity.Return" >
+        update daku.return_document set approve_time =#{approve_time},approve_status =#{approve_status}
+        where id = #{id}
+    </update>
+
+    <select id="getReturnApprovalList"  resultType="com.example.dakudemo.entity.Return">
+        SELECT * FROM daku.return_document
+        WHERE
+        <if test="approve_status != null and approve_status !=''">
+            approve_status = #{approve_status}
+        </if>
+        <if test="approve_person_id != null">
+            and approve_person_id = #{approve_person_id}
+        </if>
+    </select>
+    <select id="getReturnApprovalListAll"  resultType="com.example.dakudemo.entity.Return">
+        SELECT * FROM daku.return_document
+        WHERE
+        <if test="approve_status != null and approve_status !=''">
+            approve_status = #{approve_status}
+        </if>
+    </select>
+
+    <select id="getDocumentIdById" resultType="String">
+        SELECT document_id FROM daku.return_document
+        WHERE id =#{id}
+    </select>
+
+
+
+</mapper>

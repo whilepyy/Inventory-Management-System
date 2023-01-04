@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.dakudemo.mapper.RepairApprovalMapper">
+
+    <delete id="deleteRepairApproval" parameterType="Integer" >
+        delete from daku.check_repair_document where id = #{id}
+    </delete>
+
+    <update id="updateRepairApproval" parameterType="com.example.dakudemo.entity.Repair" >
+        update daku.check_repair_document set approve_time =#{approve_time},approve_status =#{approve_status}
+        where id = #{id}
+    </update>
+
+    <select id="getRepairApprovalList"  resultType="com.example.dakudemo.entity.Repair">
+        SELECT * FROM daku.check_repair_document
+        WHERE
+        <if test="approve_status != null and approve_status !=''">
+            approve_status = #{approve_status}
+        </if>
+        <if test="approve_person_id != null">
+            and approve_person_id = #{approve_person_id}
+        </if>
+    </select>
+    <select id="getRepairApprovalListAll"  resultType="com.example.dakudemo.entity.Repair">
+        SELECT * FROM daku.check_repair_document
+        WHERE
+        <if test="approve_status != null and approve_status !=''">
+            approve_status = #{approve_status}
+        </if>
+    </select>
+
+    <select id="getDocumentIdById" resultType="String">
+        SELECT document_id FROM daku.check_repair_document
+        WHERE id =#{id}
+    </select>
+
+
+
+</mapper>

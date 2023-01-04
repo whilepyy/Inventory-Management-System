@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.dakudemo.mapper.ReturnMapper">
+    <insert id="addReturn" parameterType="com.example.dakudemo.entity.Return" >
+        insert into daku.return_document(document_id,return_person_id, borrow_document_id, return_time, return_person_name, description) values
+            (
+                #{document_id},
+                #{return_person_id},
+                #{borrow_document_id},
+                #{return_time},
+                #{return_person_name},
+                #{description}
+            )
+    </insert>
+
+    <delete id="deleteReturn" parameterType="Integer">
+        delete from daku.return_document where id = #{id}
+    </delete>
+
+    <update id="updateReturn" parameterType="com.example.dakudemo.entity.Return">
+        update daku.return_document set document_id =#{document_id},return_person_id =#{return_person_id},
+                                        borrow_document_id =#{borrow_document_id}, return_time =#{return_time},
+                                        return_person_name =#{return_person_name}, description =#{description}
+        where id = #{id}
+    </update>
+
+    <select id="getReturnListByDocId" parameterType="String" resultType="com.example.dakudemo.entity.Return">
+        select * from daku.return_document where document_id = #{document_id}
+        order by return_time desc
+    </select>
+
+    <select id="getReturnListByUserId" parameterType="String" resultType="com.example.dakudemo.entity.Return">
+        select * from daku.return_document where return_person_id = #{return_person_id}
+        order by return_time desc
+    </select>
+
+    <select id="getReturnById" parameterType="Integer" resultType="com.example.dakudemo.entity.Return">
+        select * from daku.return_document where id = #{id}
+        order by return_time desc
+    </select>
+
+    <select id="getReturnDocIdById" parameterType="Integer" resultType="String">
+        select document_id from daku.return_document where id = #{id}
+        order by return_time desc
+    </select>
+
+    <select id="getReturnList" resultType="com.example.dakudemo.entity.Return">
+        select id, document_id, return_person_id, borrow_document_id, return_time, return_person_name, description from daku.return_document
+        WHERE 1 = 1
+        <if test="return_person_id != null">
+            and return_person_id = #{return_person_id}
+        </if>
+        <if test="document_id != null and document_id !=''">
+            and document_id = #{document_id}
+        </if>
+        <if test="return_person_name != null and return_person_name !=''">
+            and return_person_name = #{return_person_name}
+        </if>
+        order by return_time desc
+    </select>
+    <select id="getReturnListAll" resultType="com.example.dakudemo.entity.Return">
+        select * from daku.return_document order by return_time desc
+    </select>
+    <select id="getReturnListById" resultType="com.example.dakudemo.entity.Return">
+        select * from daku.return_document
+        WHERE
+        <if test="document_id != null and document_id !=''">
+             document_id = #{document_id}
+        </if>
+        order by return_time desc
+    </select>
+
+
+</mapper>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.dakudemo.mapper.DocumentDeviceMapper">
+
+    <select id="getDocumentDeviceInfo"  resultType="com.example.dakudemo.entity.DocumentDevice">
+        SELECT * FROM daku.document_device
+        WHERE document_id =#{document_id}
+    </select>
+
+    <insert id="addDocumentDevice" parameterType="com.example.dakudemo.entity.DocumentDevice" >
+        insert into daku.document_device (document_id,device_id,device_number,device_status) values
+        (
+            #{document_id},
+            #{device_id},
+            #{device_number},
+            #{device_status}
+        )
+    </insert>
+    <update id="updateDocumentDevice"  >
+        update daku.document_device set document_id =#{document_id},device_id =#{device_id},device_number =#{device_number}, device_status =#{device_status}
+        WHERE id =#{id}
+    </update>
+    <update id="updateDocumentDeviceNew"  >
+        update daku.document_device set document_id =#{document_id},device_id =#{device_id},device_number =#{device_number}, device_status =#{device_status}
+        WHERE id =#{id}
+    </update>
+
+    <select id="getDeviceIdsByDocumentId"  resultType="com.example.dakudemo.entity.DocumentDevice">
+        SELECT * FROM daku.document_device
+        WHERE document_id =#{document_id}
+    </select>
+
+<!--    chh add-->
+    <delete id="deleteDocumentDeviceById" parameterType="Integer" >
+        delete from daku.document_device where id = #{id}
+    </delete>
+
+    <delete id="deleteDocumentDeviceByDocId" parameterType="String" >
+        delete from daku.document_device where document_id = #{document_id}
+    </delete>
+
+    <select id="getDocumentDeviceByDocIdAndDeviceId" resultType="com.example.dakudemo.entity.DocumentDevice">
+        select * from daku.document_device where document_id = #{document_id} and device_id = #{device_id}
+    </select>
+</mapper>

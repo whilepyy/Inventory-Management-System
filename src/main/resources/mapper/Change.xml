@@ -1,0 +1,316 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.dakudemo.mapper.ChangeMapper">
+
+    <update id="userupdate">
+        update user
+        <set>
+<!--            <if test="password != null">-->
+<!--                password = #{password},-->
+<!--            </if>-->
+            <if test="displayName != null and displayName != ''">
+                displayName = #{displayName},
+            </if>
+            <if test="department_id != null">
+                department_id = #{department_id},
+            </if>
+        </set>
+        <where>
+            user_name = #{user_name}
+        </where>
+    </update>
+
+<!--    <update id="roleupdate">-->
+<!--        update role-->
+<!--        <set>-->
+<!--            <if test="r_name != null">-->
+<!--                user_name = #{user_name},-->
+<!--            </if>-->
+<!--            <if test="password != null">-->
+<!--                password = #{password},-->
+<!--            </if>-->
+<!--            <if test="displayName != null">-->
+<!--                displayName = #{displayName},-->
+<!--            </if>-->
+<!--            <if test="department_id != null">-->
+<!--                department_id = #{department_id},-->
+<!--            </if>-->
+<!--        </set>-->
+<!--        <where>-->
+<!--            id = #{id}-->
+<!--        </where>-->
+<!--    </update>-->
+
+
+
+
+
+    <resultMap id="user_chg" type="com.example.dakudemo.entity.User_chg">
+        <id column="id" property="id"/>
+        <result column="user_name" property="user_name"/>
+        <result column="password" property="password"/>
+        <result column="displayName" property="displayName"/>
+        <result column="create_time" property="create_time" jdbcType="DATE"/>
+        <collection property="user_role_system_department" javaType="java.util.List"
+                    ofType="com.example.dakudemo.entity.Role_System_Department_chg">
+            <result property="role_id" column="role_id"/>
+            <result property="role_name" column="role_name"/>
+            <result property="system_id" column = "system_id"/>
+            <result property="system_name" column="system_name"/>
+            <result property="department_id" column = "department_id"/>
+            <result property="department_name" column="department_name"/>
+        </collection>
+    </resultMap>
+
+
+
+    <select id="userfind" resultMap="user_chg">
+        select u.id,u.user_name,u.password,u.displayName,u.create_time,
+        ursd.role_id,ursd.system_id,ursd.department_id
+        from daku.user u left join daku.user_role_system_department ursd
+        on u.id = ursd.user_id
+        <where>
+            <if test = "user_id != null">
+                and u.id = #{user_id}
+            </if>
+            <if test = "user_name != null and user_name != ''">
+                and u.user_name = #{user_name}
+            </if>
+            <if test = "displayName != null and displayName != ''">
+                and u.displayName = #{displayName}
+            </if>
+            <if test = "system_id != null">
+            and ursd.system_id = #{system_id}
+            </if>
+            <if test = "department_id != null">
+                and ursd.department_id = #{department_id}
+            </if>
+
+        </where>
+        ORDER BY u.create_time DESC 
+
+
+    </select>
+
+    <update id="DSupdate">
+        update department_system
+        <set>
+            <if test="department_id != null">
+                department_id = #{department_id},
+            </if>
+        </set>
+        <where>
+            system_id = #{system_id}
+        </where>
+    </update>
+
+
+
+<!--    <insert id="systeminsert">-->
+<!--        insert into daku.`system` (system_name,description)-->
+<!--        values(-->
+<!--               #{system_name,description})-->
+<!--    </insert>-->
+
+    <insert id="department_insert">
+        insert into daku.`department` (department_name,description)
+        values(
+                  #{name},#{description}
+              )
+    </insert>
+
+    <update id="department_update">
+        update department
+        <set>
+            <if test = "description != null and description != ''">
+                description = #{description}
+            </if>
+        </set>
+        <where>
+            department_name = #{name}
+        </where>
+    </update>
+
+
+    <update id="systemupdate">
+        update `system`
+        <set>
+            <if test = "description != null and description != ''">
+                description = #{description}
+            </if>
+        </set>
+        <where>
+            system_name = #{system_name}
+        </where>
+    </update>
+
+    <insert id="DSinsert">
+        insert into daku.department_system (department_id, system_id)
+        values(
+               #{department_id},
+               #{system_id}
+              )
+    </insert>
+
+    <insert id="ursd_insert">
+        insert into user_role_system_department(user_id, role_id, system_id, department_id)
+        values(
+               #{user_id},
+               #{URSD.role_id},
+               #{URSD.system_id},
+               #{URSD.department_id}
+              )
+    </insert>
+
+    <update id="ursd_update">
+        update user_role_system_department
+        <set>
+            <if test="role_id != null">
+                role_id = #{URSD.role_id},
+            </if>
+            <if test="system_id != null">
+                system_id = #{URSD.system_id},
+            </if>
+            <if test="department_id != null">
+                department_id = #{URSD.department_id},
+            </if>
+        </set>
+        <where>
+            user_id = #{user_id}
+        </where>
+    </update>
+
+    <select id="system_findAll" resultType="java.util.Map">
+        select id,system_name
+        from daku.`system`
+    </select>
+
+
+
+
+    <resultMap id="sys_chg" type="com.example.dakudemo.entity.System_chg">
+        <id column="id" property="system_id" jdbcType="INTEGER" />
+        <result column="system_name" property="system_name"
+                jdbcType="VARCHAR" />
+        <result column="department_id" property="department_id"
+                jdbcType="INTEGER" />
+        <result column="description" property="description"/>
+        <result column="department_name" property="department_name"/>
+
+    </resultMap>
+
+
+    <select id="system_find" resultMap="sys_chg">
+        select s.id,s.system_name,s.description,ds.department_id,d.department_name
+        from `system` as s
+        left join department_system as ds on s.id = ds.system_id
+        left join department as d on ds.department_id = d.id
+
+        <where>
+            <if test = "system_id != null and system_id !=''">
+                and s.id = #{system_id}
+            </if>
+            <if test = "system_name != null and system_name !=''">
+                and s.system_name = #{system_name}
+            </if>
+            <if test = "department_id != null and department_id !=''">
+                and ds.department_id = #{department_id}
+            </if>
+
+        </where>
+
+    </select>
+
+<!--    <select id="department_findAll" resultType="java.util.Map">-->
+<!--        select id, name from daku.department-->
+<!--    </select>-->
+
+    <select id="URSD_findid" resultType="java.util.Map">
+        select * from daku.user_role_system_department where user_id = #{user_id}
+    </select>
+
+    <insert id="role_insert">
+        insert into daku.role (r_name,description)
+        values(
+                  #{r_name},#{description}
+              )
+    </insert>
+
+    <update id="role_update">
+        update role
+        <set>
+            <if test = "description != null and description != ''">
+                description = #{description}
+            </if>
+        </set>
+        <where>
+            r_name = #{r_name}
+        </where>
+    </update>
+
+    <resultMap id="department_chg" type="com.example.dakudemo.entity.Department_chg">
+        <id column="id" property="department_id" jdbcType="INTEGER" />
+        <result column="department_name" property="department_name"
+                jdbcType="VARCHAR" />
+        <result column="description" property="description"
+                jdbcType="VARCHAR" />
+    </resultMap>
+
+    <select id="department_findAll" resultMap="department_chg">
+        select * from department
+    </select>
+
+
+
+
+    <resultMap id="role_chg" type="com.example.dakudemo.entity.Role_chg">
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="r_name" property="name"
+                jdbcType="VARCHAR" />
+        <result column="description" property="description" javaType="String"/>
+        <collection property="role_permission" javaType="java.util.List"
+                    ofType="com.example.dakudemo.entity.Role_Permission">
+            <id property="permission_id" column="permission_id"/>
+            <result property="p_name" column = "p_name"/>
+            <result property="url" column = "url"/>
+        </collection>
+    </resultMap>
+
+
+    <select id="role_find" resultMap="role_chg">
+        select r.id, r.r_name, r.description,rp.permission_id,p.p_name,p.url
+        from daku.role r left join role_permission rp on r.id = rp.role_id
+        left join permission p on rp.permission_id = p.id
+        <where>
+            <if test = "id != null">
+                and r.id = #{id}
+            </if>
+            <if test = "r_name != null and r_name != ''">
+                and r.r_name = #{r_name}
+            </if>
+        </where>
+    </select>
+<!--    <select id="role_find" resultMap="role_chg">-->
+<!--        select r.id, r.r_name, r.description-->
+<!--        from daku.role r-->
+<!--        <where>-->
+<!--            <if test = "id != null">-->
+<!--                and r.id = #{id}-->
+<!--            </if>-->
+<!--            <if test = "r_name != null and r_name != ''">-->
+<!--                and r.r_name = #{r_name}-->
+<!--            </if>-->
+<!--        </where>-->
+<!--    </select>-->
+
+
+    <insert id="RPinsert">
+        insert into daku.role_permission (role_id, permission_id)
+        values(
+                  #{role_id},
+                  #{permission_id}
+              )
+    </insert>
+
+</mapper>

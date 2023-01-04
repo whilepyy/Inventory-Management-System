@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.dakudemo.mapper.ApproveMapper">
+    <insert id="addApprove" parameterType="com.example.dakudemo.entity.Approve">
+        insert into daku.approve(document_id, approve_type, document_type, user_id, system_id, approve_person_id, approve_node, approve_status, approve_time, approve_suggestion)
+        VALUES
+        (
+         #{document_id},
+         #{approve_type},
+         #{document_type},
+         #{user_id},
+         #{system_id},
+         #{approve_person_id},
+         #{approve_node},
+         #{approve_status},
+         #{approve_time},
+         #{approve_suggestion}
+        )
+    </insert>
+
+    <update id="updateApprove" parameterType="com.example.dakudemo.entity.Approve">
+        update daku.approve set document_id=#{document_id}, approve_type=#{approve_type},
+                                document_type=#{document_type},user_id =#{user_id},
+                                system_id=#{system_id},approve_person_id=#{approve_person_id},
+                                approve_node=#{approve_node}, approve_status=#{approve_status},
+                                approve_time=#{approve_time}, approve_suggestion=#{approve_suggestion}
+        where
+            id=#{id}
+    </update>
+
+    <delete id="deleteApprove">
+        delete from daku.approve
+        <where>
+            1 = 1
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="document_id != null and document_id != ''">
+                and document_id = #{document_id}
+            </if>
+
+        </where>
+    </delete>
+
+    <select id="getApprove" resultType="com.example.dakudemo.entity.Approve">
+        select * from daku.approve
+        <where>
+            1 = 1
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="document_id != null and document_id != ''">
+                and document_id = #{document_id}
+            </if>
+            <if test="approve_type != null">
+                and approve_type = #{approve_type}
+            </if>
+            <if test="document_type != null">
+                and document_type = #{document_type}
+            </if>
+            <if test="user_id != null">
+                and user_id = #{user_id}
+            </if>
+            <if test="system_id != null">
+                and system_id = #{system_id}
+            </if>
+            <if test="approve_person_id != null">
+                and approve_person_id = #{approve_person_id}
+            </if>
+            <if test="approve_node != null">
+                and approve_node = #{approve_node}
+            </if>
+            <if test="approve_status != null">
+                and approve_status = #{approve_status}
+            </if>
+        </where>
+        order by document_id, approve_node,approve_time asc
+    </select>
+
+    <select id="getRoleIdByApproveNodeAndType" resultType="Integer">
+        select role_id from approve_process
+        where approve_type = #{approve_type} and approve_node = #{approve_node}
+    </select>
+
+    <select id="getApproveProcessByRoleId" resultType="com.example.dakudemo.entity.ApproveProcess">
+        select * from approve_process where role_id = #{role_id}
+    </select>
+
+    <!--查询node最大的记录-->
+    <select id="getOnesCurrentApproves" resultType="com.example.dakudemo.entity.Approve">
+        SELECT a.id, a.document_id, a.approve_type, a.document_type, a.user_id, a.system_id, a.approve_person_id, a.approve_node, a.approve_status, a.approve_time, a.approve_suggestion
+        FROM approve a
+                 LEFT JOIN approve b ON b.document_id = a.document_id AND b.approve_node > a.approve_node
+        WHERE b.approve_node IS NULL
+          AND 1 = 1
+            <if test="user_id != null">
+                AND a.user_id = #{user_id}
+            </if>
+            <if test="document_id != null and document_id != ''">
+                AND a.document_id = #{document_id}
+            </if>
+    </select>
+
+    <select id="getVisibleRangeByRoleId" resultType="com.example.dakudemo.entity.VisibleRange">
+        select * from role_visible_range where role_id = #{role_id}
+    </select>
+
+    <select id="getApprovesBySysAndDepartment" resultType="com.example.dakudemo.entity.Approve">
+        SELECT DISTINCT a.id, a.document_id, a.approve_type, a.document_type,a.user_id, a.system_id,a.approve_person_id, a.approve_node, a.approve_status, a.approve_time, a.approve_suggestion
+        FROM approve a
+        LEFT JOIN department_system ds ON ds.system_id = a.system_id
+        WHERE
+            1 = 1
+            <if test="approve_type != null">
+                AND a.approve_type = #{approve_type}
+            </if>
+            <if test="approve_node != null">
+                AND a.approve_node = #{approve_node}
+            </if>
+            <if test="department_id  != null">
+                AND  ds.department_id = #{department_id}
+            </if>
+            <if test="system_id  != null">
+                AND a.system_id = #{system_id}
+            </if>
+    </select>
+
+    <select id="getApproveProcessByApproveType" resultType="com.example.dakudemo.entity.ApproveProcess">
+        select * from approve_process where approve_type = #{approve_type} order by approve_node asc;
+    </select>
+
+    <select id="getLastApproveProcessByApproveType" resultType="com.example.dakudemo.entity.ApproveProcess">
+        SELECT a.id, a.approve_type, a.approve_node, a.role_id
+        FROM approve_process a
+        LEFT JOIN approve_process b ON b.approve_type = a.approve_type AND b.approve_node > a.approve_node
+        WHERE b.approve_node IS NULL
+        AND a.approve_type = #{approve_type}
+    </select>
+
+    <select id="getFirstApproveProcessByApproveType" resultType="com.example.dakudemo.entity.ApproveProcess">
+        SELECT a.id, a.approve_type, a.approve_node, a.role_id
+        FROM approve_process a
+                 LEFT JOIN approve_process b ON b.approve_type = a.approve_type AND a.approve_node > b.approve_node
+        WHERE b.approve_node IS NULL
+          AND a.approve_type = #{approve_type}
+    </select>
+
+    <select id="getVeryImportantPerson" resultType="Integer">
+        select id from special_person where user_id = #{user_id}
+    </select>
+
+    <resultMap id="rolesMap" type="com.example.dakudemo.entity.Role">
+        <id column="role_id" property="id"/>
+        <result column="system_id" property="system_id"/>
+        <result column="department_id" property="department_id"/>
+    </resultMap>
+
+    <resultMap id="rolesMapAll" type="com.example.dakudemo.entity.Role">
+        <id column="role_id" property="id"/>
+        <result column="r_name" property="name"/>
+        <result column="system_id" property="system_id"/>
+        <result column="system_name" property="system_name"/>
+        <result column="department_id" property="department_id"/>
+        <result column="department_name" property="department_name"/>
+    </resultMap>
+
+    <select id="getRoleByUserIdAndSysId" resultMap="rolesMap">
+        select role_id,system_id,department_id from user_role_system_department where user_id = #{user_id} and system_id = #{system_id}
+    </select>
+
+    <select id="getApproveIdByNodeAndDocId" resultType="Integer">
+        select id from approve where document_id = #{document_id} and approve_node = #{approve_node}
+    </select>
+
+
+
+    <select id="getRolesByUserId" resultMap="rolesMapAll">
+        select ursd.role_id, r.r_name, ursd.system_id, s.system_name,ursd.department_id, d.department_name from user_role_system_department ursd
+        inner join daku.role r on ursd.role_id = r.id
+        inner join daku.`system` s on ursd.system_id = s.id
+        inner join daku.department d on ursd.department_id = d.id
+        where user_id = #{user_id}
+    </select>
+
+    <select id="getDepartmentIdBySysId" resultType="Integer">
+        select  department_id from department_system where system_id = #{system_id}
+    </select>
+
+    <select id="getSysNameBySysId" resultType="String">
+        select system_name from daku.`system` where id = #{id}
+    </select>
+
+    <select id="getDepartmentNameByDepartmentId" resultType="String">
+        select department_name from daku.department where id = #{id}
+    </select>
+
+    <select id="getStatusDes" resultType="String">
+        select description from daku.document_status_description where document_status = #{document_status}
+    </select>
+
+    <select id="getUserIdsParams" resultType="Integer">
+        select user_id from user_role_system_department
+        where 1 = 1
+        <if test="role_id != null">
+            and role_id = #{role_id}
+        </if>
+        <if test="system_id != null">
+            and system_id = #{system_id}
+        </if>
+        <if test="department_id != null">
+            and department_id = #{department_id}
+        </if>
+    </select>
+</mapper>

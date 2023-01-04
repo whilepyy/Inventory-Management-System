@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.dakudemo.mapper.RepairMapper">
+    <insert id="addRepair" parameterType="com.example.dakudemo.entity.Repair" >
+        insert into daku.check_repair_document(document_id,check_repair_category_id,check_repair_cause_id,
+                                               fault_description,repair_company,document_person_id,repair_person_name,
+                                               check_repair_result, document_status,description) values
+            (
+                #{document_id},
+                #{check_repair_category_id},
+                #{check_repair_cause_id},
+                #{fault_description},
+                #{repair_company},
+                #{document_person_id},
+                #{repair_person_name},
+                #{check_repair_result},
+                #{document_status},
+                #{description}
+            )
+    </insert>
+
+    <delete id="deleteRepair" parameterType="Integer">
+        delete from daku.check_repair_document where id = #{id}
+    </delete>
+
+    <update id="updateRepair" parameterType="com.example.dakudemo.entity.Repair">
+        update daku.check_repair_document set document_id =#{document_id},check_repair_category_id =#{check_repair_category_id},
+                                              check_repair_cause_id =#{check_repair_cause_id},fault_description =#{fault_description},
+                                              repair_company =#{repair_company},document_person_id =#{document_person_id},
+                                              repair_person_name =#{repair_person_name},check_repair_result =#{check_repair_result},
+                                              document_status=#{document_status}, description=#{description}
+        where id = #{id}
+    </update>
+    <select id="getRepairList" resultType="com.example.dakudemo.entity.Repair">
+        select * from daku.check_repair_document
+    </select>
+    <select id="getRepairListParams" resultType="com.example.dakudemo.entity.Repair">
+        select * from daku.check_repair_document
+        WHERE 1 = 1
+        <if test="check_repair_category_id != null">
+            and check_repair_category_id = #{check_repair_category_id}
+        </if>
+        <if test="document_id != null and document_id !=''">
+            and document_id = #{document_id}
+        </if>
+        <if test="document_status != null">
+            and document_status = #{document_status}
+        </if>
+    </select>
+    <select id="getRepairCategory" resultType="com.example.dakudemo.entity.RepairCategory">
+        select * from daku.check_repair_category
+    </select>
+    <select id="getRepairCause" resultType="com.example.dakudemo.entity.RepairCause">
+        select * from daku.check_repair_cause
+    </select>
+
+    <select id="getRepairById" resultType="com.example.dakudemo.entity.Repair">
+        select * from daku.check_repair_document where id = #{id}
+    </select>
+</mapper>

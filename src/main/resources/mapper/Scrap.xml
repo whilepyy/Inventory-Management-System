@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--xml版本，编码方式-->
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<!--标记这是一个mybatis的映射文件 *.dtd约束文件-->
+
+<!--*.dtd约束文件：xml要求有一定格式，必须有哪些值，规定了这个文件应该具有哪些语法规范-->
+
+
+
+
+
+<mapper namespace="com.example.dakudemo.mapper.ScrapMapper">
+
+
+    <insert id="addScrap" parameterType="com.example.dakudemo.entity.Scrap">
+        insert into daku.scrap_document(document_id, document_person_id, scrap_reason, process_way,document_status,description)
+        values (
+                   #{document_id},
+                   #{document_person_id},
+                   #{scrap_reason},
+                   #{process_way},
+                   #{document_status},
+                   #{description}
+               )
+
+    </insert>
+
+
+    <delete id="deleteScrap" parameterType="Integer">
+        delete from daku.scrap_document where id = #{id}
+    </delete>
+
+    <update id="updateScrap" parameterType="com.example.dakudemo.entity.Scrap">
+        update daku.scrap_document set document_id = #{document_id},document_person_id = #{document_person_id},
+                                       scrap_reason = #{scrap_reason},process_way = #{process_way},
+                                       document_status=#{document_status},description= #{description}
+        where id = #{id}
+    </update>
+
+    <select id="getScrapListParams" resultType="com.example.dakudemo.entity.Scrap">
+        select * from scrap_document
+        where 1 = 1
+        <if test="document_id != null and document_id != ''">
+            and document_id = #{document_id}
+        </if>
+        <if test="document_status != null">
+            and document_status = #{document_status}
+          </if>
+    </select>
+    <select id="getScrapListParamsAll" resultType="com.example.dakudemo.entity.Scrap">
+        select * from scrap_document
+    </select>
+    <select id="getScrapListParamsByID" resultType="com.example.dakudemo.entity.Scrap">
+        select * from scrap_document
+        where 1 = 1
+        <if test="document_id != null and document_id != ''">
+            document_id = #{document_id}
+        </if>
+    </select>
+
+    <select id="getScrapById" parameterType="Integer" resultType="com.example.dakudemo.entity.Scrap">
+        select * from scrap_document where id = #{id}
+    </select>
+
+    <select id="getScrapDocIdById" parameterType="Integer" resultType="String">
+        select document_id from scrap_document where id = #{id}
+    </select>
+</mapper>

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.dakudemo.mapper.LendMapper">
+    <insert id="addLend" parameterType="com.example.dakudemo.entity.Lend" >
+        insert into daku.borrow_document(document_id,device_user_id,use_time,use_reason,approve_type,document_status, description) values
+            (
+                #{document_id},
+                #{device_user_id},
+                #{use_time},
+                #{use_reason},
+                #{approve_type},
+                #{document_status},
+                #{description}
+            )
+    </insert>
+
+    <delete id="deleteLend" parameterType="Integer">
+        delete from daku.borrow_document where id = #{id}
+    </delete>
+
+    <update id="updateLend" parameterType="com.example.dakudemo.entity.Lend">
+        update daku.borrow_document set document_id =#{document_id},device_user_id =#{device_user_id},use_time =#{use_time},
+                                        use_reason =#{use_reason},approve_type =#{approve_type},
+                                        document_status=#{document_status}, description=#{description}
+        where id = #{id}
+    </update>
+
+    <select id="getLendListByDocId" parameterType="String" resultType="com.example.dakudemo.entity.Lend">
+        select * from daku.borrow_document where document_id = #{document_id} order by use_time desc
+    </select>
+
+    <select id="getLendListByUserId" parameterType="String" resultType="com.example.dakudemo.entity.Lend">
+        select * from daku.borrow_document where device_user_id = #{device_user_id} order by use_time desc
+    </select>
+
+    <select id="getLendById" parameterType="Integer" resultType="com.example.dakudemo.entity.Lend">
+        select * from daku.borrow_document where id = #{id} order by use_time desc
+    </select>
+
+    <select id="getLendDocIdById" parameterType="Integer" resultType="String">
+        select document_id from daku.borrow_document where id = #{id} order by use_time desc
+    </select>
+
+    <select id="getLendList" resultType="com.example.dakudemo.entity.Lend">
+        select * from daku.borrow_document
+        WHERE 1 = 1
+        <if test="device_user_id != null">
+             and device_user_id = #{device_user_id}
+        </if>
+        <if test="document_id != null and document_id !=''">
+             and document_id = #{document_id}
+        </if>
+        <if test="document_status != null">
+            and document_status = #{document_status}
+        </if>
+        order by use_time desc
+    </select>
+    <select id="getLendListAll" resultType="com.example.dakudemo.entity.Lend">
+        select * from daku.borrow_document order by use_time desc
+    </select>
+    <select id="getLendListById" resultType="com.example.dakudemo.entity.Lend">
+        select * from daku.borrow_document
+        WHERE
+        <if test="document_id != null and document_id !=''">
+            document_id = #{document_id}
+        </if>
+        order by use_time desc
+    </select>
+
+
+</mapper>

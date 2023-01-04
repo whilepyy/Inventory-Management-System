@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.dakudemo.mapper.InoutMapper">
+
+    <insert id="addIn" parameterType="com.example.dakudemo.entity.Inout" >
+        insert into daku.inout_warehouse_document(document_id,document_category_id,buy_use_person_id,buy_use_time,
+                                                  buy_use_reason,document_status, approve_type,description, buy_person_name) values
+        (
+            #{document_id},
+            #{document_category_id},
+            #{buy_use_person_id},
+            #{buy_use_time},
+            #{buy_use_reason},
+            #{document_status},
+            #{approve_type},
+            #{description},
+            #{buy_person_name}
+        )
+    </insert>
+
+    <delete id="deleteIn" parameterType="Integer" >
+        delete from daku.inout_warehouse_document where id = #{id}
+    </delete>
+
+    <update id="updateIn">
+        update daku.inout_warehouse_document set document_id =#{document_id},document_category_id =#{document_category_id},
+                                                 buy_use_person_id =#{buy_use_person_id},buy_use_time =#{buy_use_time},
+                                                 buy_use_reason =#{buy_use_reason},approve_type=#{approve_type},
+                                                 document_status=#{document_status},
+                                                 buy_person_name=#{buy_person_name}, description=#{description}
+        where id = #{id}
+    </update>
+    <update id="updateInNew">
+        update daku.inout_warehouse_document set document_id =#{document_id},document_category_id =#{document_category_id},
+                                                 buy_use_person_id =#{buy_use_person_id},buy_use_time =#{buy_use_time},
+                                                 buy_use_reason =#{buy_use_reason}, approve_type=#{approve_type},
+                                                 document_status=#{document_status},
+                                                 buy_person_name=#{buy_person_name},description=#{description}
+        where id = #{id}
+    </update>
+
+
+    <select id="getInListParams"  resultType="com.example.dakudemo.entity.Inout">
+        SELECT id,document_id,document_category_id,buy_use_person_id,buy_use_time,buy_use_reason,approve_type,document_status,description,buy_person_name FROM daku.inout_warehouse_document
+        WHERE
+              1 = 1
+        <if test="document_category_id != null">
+            and document_category_id = #{document_category_id}
+        </if>
+        <if test="document_id != null and document_id !=''">
+            and document_id = #{document_id}
+        </if>
+        <if test="document_status != null">
+            and document_status = #{document_status}
+        </if>
+        <if test="buy_use_person_id != null">
+            and buy_use_person_id = #{buy_use_person_id}
+        </if>
+        order by buy_use_time desc
+    </select>
+
+    <select id="getInList"  resultType="com.example.dakudemo.entity.Inout">
+        SELECT id,document_id,document_category_id,buy_use_person_id,buy_use_time,buy_use_reason,approve_type,document_status,description,buy_person_name FROM daku.inout_warehouse_document
+        WHERE document_category_id = #{document_category_id}
+        order by buy_use_time desc
+    </select>
+
+    <insert id="addOut" parameterType="com.example.dakudemo.entity.Inout" >
+        insert into daku.inout_warehouse_document(document_id, document_category_id, buy_use_person_id, buy_use_time, buy_use_reason, approve_type, document_status,description) values
+        (
+            #{document_id},
+            #{document_category_id},
+            #{buy_use_person_id},
+            #{buy_use_time},
+            #{buy_use_reason},
+            #{approve_type},
+            #{document_status},
+            #{description}
+        )
+    </insert>
+
+    <delete id="deleteOut" parameterType="Integer" >
+        delete from daku.inout_warehouse_document where id = #{id}
+    </delete>
+
+    <update id="updateOut" >
+        update daku.inout_warehouse_document set document_id =#{document_id},document_category_id =#{document_category_id},
+                                                 buy_use_person_id =#{buy_use_person_id},buy_use_time =#{buy_use_time},
+                                                 buy_use_reason =#{buy_use_reason},approve_type=#{approve_type},
+                                                 document_status=#{document_status}, description=#{description}
+        where document_id = #{document_id}
+    </update>
+
+    <select id="getOutListParams"  resultType="com.example.dakudemo.entity.Inout">
+        SELECT id,document_id,document_category_id,buy_use_person_id,buy_use_time,buy_use_reason,approve_type,document_status,description FROM daku.inout_warehouse_document
+        WHERE 1 = 1
+        <if test="document_id != null and document_id !=''">
+            and document_id = #{document_id}
+        </if>
+        <if test="document_category_id != null">
+            and document_category_id = #{document_category_id}
+        </if>
+        <if test="buy_use_person_id != null">
+            and buy_use_person_id = #{buy_use_person_id}
+        </if>
+        <if test="document_status != null">
+            and document_status = #{document_status}
+        </if>
+        order by buy_use_time desc
+    </select>
+
+    <select id="getOutList"  resultType="com.example.dakudemo.entity.Inout">
+        SELECT id,document_id,document_category_id,buy_use_person_id,buy_use_time,buy_use_reason,approve_type,document_status,description FROM daku.inout_warehouse_document
+        WHERE
+        <if test="document_category_id != null and document_category_id !=''">
+            document_category_id = #{document_category_id}
+        </if>
+        order by buy_use_time desc
+    </select>
+
+    <select id="getInoutById" resultType="com.example.dakudemo.entity.Inout">
+        select * from daku.inout_warehouse_document where id = #{id}
+        order by buy_use_time desc
+    </select>
+
+
+</mapper>

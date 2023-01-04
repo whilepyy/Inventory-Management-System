@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--xml版本，编码方式-->
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.dakudemo.mapper.ScrapApprovalMapper">
+    <delete id="deleteScrapApproval" parameterType="Integer">
+        delete from scrap_document where id = #{id}
+    </delete>
+
+    <update id="updateScrapApproval" >
+        update daku.scrap_document set approve_time =#{approve_time},approve_status =#{approve_status}
+        where id = #{id}
+    </update>
+
+    <select id="getScrapApprovalList"  resultType="com.example.dakudemo.entity.Scrap">
+        SELECT * FROM daku.scrap_document
+        WHERE
+        <if test="approve_status != null and approve_status !=''">
+            approve_status = #{approve_status}
+        </if>
+        <if test="approve_person_id != null">
+            and approve_person_id = #{approve_person_id}
+        </if>
+    </select>
+    <select id="getScrapApprovalListAll"  resultType="com.example.dakudemo.entity.Scrap">
+        SELECT * FROM daku.scrap_document
+        WHERE
+        <if test="approve_status != null and approve_status !=''">
+            approve_status = #{approve_status}
+        </if>
+    </select>
+
+    <select id="getDocumentIdById" resultType="String">
+        SELECT document_id FROM daku.scrap_document
+        WHERE id =#{id}
+    </select>
+</mapper>

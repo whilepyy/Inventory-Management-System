@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.dakudemo.mapper.DeviceMapper">
+
+    <insert id="addDevice" parameterType="com.example.dakudemo.entity.Device" >
+        insert into daku.device (device_id,name,model,inventory_number,repair_number,lend_number,outwarehouse_number,scrap_number,category_id,fund_id,location,amount_unit,create_time,sale_company,product_company,unit_price,description) values
+        (
+            #{device_id},
+            #{name},
+            #{model},
+            #{inventory_number},
+            #{repair_number},
+            #{lend_number},
+            #{outwarehouse_number},
+            #{scrap_number},
+            #{category_id},
+            #{fund_id},
+            #{location},
+            #{amount_unit},
+            #{create_time},
+            #{sale_company},
+            #{product_company},
+            #{unit_price},
+            #{description}
+        )
+    </insert>
+
+    <update id="updateDevice"  >
+        update daku.device set device_id =#{device_id},name =#{name},model =#{model},
+                               inventory_number =#{inventory_number},repair_number =#{repair_number},
+                               lend_number =#{lend_number},outwarehouse_number =#{outwarehouse_number},
+                               scrap_number =#{scrap_number},category_id =#{category_id},
+                               fund_id =#{fund_id},location =#{location},
+                               amount_unit =#{amount_unit},create_time =#{create_time},
+                               sale_company =#{sale_company},product_company =#{product_company},
+                               unit_price =#{unit_price},description =#{description}
+        WHERE device_id =#{device_id}
+    </update>
+    <update id="updateDeviceNew"  >
+        update daku.device set device_id =#{device_id},name =#{name},model =#{model},
+                               inventory_number =#{inventory_number},repair_number =#{repair_number},
+                               lend_number =#{lend_number},outwarehouse_number =#{outwarehouse_number},
+                               scrap_number =#{scrap_number},category_id =#{category_id},fund_id =#{fund_id},
+                               location =#{location},amount_unit =#{amount_unit},create_time =#{create_time},
+                               sale_company =#{sale_company},product_company =#{product_company},
+                               unit_price =#{unit_price},description =#{description}
+        WHERE device_id = #{device_id}
+    </update>
+
+
+    <select id="getDeviceListParams"  resultType="com.example.dakudemo.entity.Device">
+        SELECT id,device_id,name,model,inventory_number,repair_number,lend_number,outwarehouse_number,scrap_number,category_id,fund_id,location,amount_unit,create_time,sale_company,product_company,unit_price,description FROM daku.device
+        WHERE 1 = 1
+            <if test="device_id != null and device_id !=''">
+                and device_id = #{device_id}
+            </if>
+            <if test="name != null and name !=''">
+                 and name = #{name}
+            </if>
+            <if test="category_id != null and category_id !=''">
+                 and category_id = #{category_id}
+            </if>
+            <if test="location != null and location !=''">
+                 and location = #{location}
+            </if>
+        order by create_time desc
+    </select>
+
+    <select id="getDeviceList"  resultType="com.example.dakudemo.entity.Device">
+        SELECT id,device_id,name,model,inventory_number,repair_number,lend_number,outwarehouse_number,scrap_number,category_id,fund_id,location,amount_unit,create_time,sale_company,product_company,unit_price,description FROM daku.device
+        order by create_time desc
+    </select>
+
+    <select id="getDeviceCategoryNameById"  resultType="String">
+        SELECT category FROM daku.device_category WHERE id =#{id}
+    </select>
+
+    <select id="getDeviceCategoryNameByNu"  resultType="String">
+        SELECT category FROM daku.device_category WHERE category_nu = #{category_nu}
+    </select>
+
+    <select id="getDeviceCategory"  resultType="com.example.dakudemo.entity.DeviceCategory">
+        SELECT * FROM daku.device_category
+    </select>
+
+    <select id="getFundCategory"  resultType="com.example.dakudemo.entity.FundCategory">
+        SELECT * FROM daku.device_fund
+    </select>
+
+
+    <select id="getDeviceInfoByDeviceId"  resultType="com.example.dakudemo.entity.Device">
+        SELECT * FROM daku.device
+        WHERE device_id = #{deviceId}
+        order by create_time desc
+    </select>
+
+    <update id="updateInventoryNumber" >
+        update daku.device set inventory_number = inventory_number + #{addNumber}
+        where device_id = #{device_id}
+    </update>
+    <update id="updateMinusInventoryNumber" >
+        update daku.device set inventory_number = inventory_number - #{minusNumber}
+        where device_id = #{device_id}
+    </update>
+    <update id="updateAddOutwarehouseNumber" >
+        update daku.device set outwarehouse_number = outwarehouse_number + #{addNumber}
+        where device_id = #{device_id}
+    </update>
+    <update id="updateMinusOutwarehouseNumber" >
+        update daku.device set outwarehouse_number = outwarehouse_number - #{minusNumber}
+        where device_id = #{device_id}
+    </update>
+
+    <select id="getAllDeviceIds" resultType="String">
+        SELECT device_id FROM daku.device
+    </select>
+    <update id="updateAddLendNumber">
+        update daku.device set lend_number = lend_number + #{addNumber}
+        where device_id = #{device_id}
+    </update>
+    <update id="updateMinusLendNumber">
+        update daku.device set lend_number = lend_number - #{minusNumber}
+        where device_id = #{device_id}
+    </update>
+    <update id="updateAddReturnNumber">
+        update daku.device set lend_number = lend_number - #{addNumber}
+        where device_id = #{device_id}
+    </update>
+    <update id="updateMinusReturnNumber">
+        update daku.device set lend_number = lend_number + #{minusNumber}
+        where device_id = #{device_id}
+    </update>
+    <update id="updateAddRepairwarehouseNumber" >
+        update daku.device set repair_number = repair_number + #{addNumber}
+        where device_id = #{device_id}
+    </update>
+    <update id="updateMinusRepairwarehouseNumber" >
+        update daku.device set repair_number = repair_number - #{minusNumber}
+        where device_id = #{device_id}
+    </update>
+    <update id="updateAddScrapNumber">
+        update daku.device set scrap_number = scrap_number + #{addNumber}
+        where device_id = #{device_id}
+    </update>
+
+    <update id="updateMinusScrapNumber">
+        update daku.device set scrap_number = scrap_number - #{minusNumber}
+        where device_id = #{device_id}
+    </update>
+
+    <update id="updateAddRestockWarehouseNumber">
+        update daku.device set repair_number = device.repair_number - #{addNumber}
+        where device_id = #{device_id}
+    </update>
+
+    <update id="updateMinusRestockWarehouseNumber">
+        update daku.device set repair_number = device.repair_number + #{minusNumber}
+        where device_id = #{device_id}
+    </update>
+
+    <insert id="addDeviceTemp" parameterType="com.example.dakudemo.entity.Device">
+        insert into daku.device_temp (device_id,name,model,inventory_number,repair_number,lend_number,
+                                      outwarehouse_number,scrap_number,category_id,fund_id,location,amount_unit,
+                                      create_time,sale_company,product_company,unit_price,description,document_id) values
+            (
+                #{device_id},
+                #{name},
+                #{model},
+                #{inventory_number},
+                #{repair_number},
+                #{lend_number},
+                #{outwarehouse_number},
+                #{scrap_number},
+                #{category_id},
+                #{fund_id},
+                #{location},
+                #{amount_unit},
+                #{create_time},
+                #{sale_company},
+                #{product_company},
+                #{unit_price},
+                #{description},
+                #{document_id}
+            )
+    </insert>
+
+    <delete id="deleteDeviceTemp">
+        delete from device_temp
+        where 1 = 1
+        <if test="id != null">
+            id = #{id}
+        </if>
+        <if test="device_id != null and device_id != ''">
+            and device_id = #{device_id}
+        </if>
+    </delete>
+
+    <update id="updateDeviceTemp" parameterType="com.example.dakudemo.entity.Device">
+        update daku.device_temp set device_id =#{device_id},name =#{name},model =#{model},
+                               inventory_number =#{inventory_number},repair_number =#{repair_number},
+                               lend_number =#{lend_number},outwarehouse_number =#{outwarehouse_number},
+                               scrap_number =#{scrap_number},category_id =#{category_id},fund_id =#{fund_id},
+                               location =#{location},amount_unit =#{amount_unit},create_time =#{create_time},
+                               sale_company =#{sale_company},product_company =#{product_company},
+                               unit_price =#{unit_price},description =#{description}
+        WHERE device_id = #{device_id} and document_id = #{document_id}
+    </update>
+
+    <select id="getDeviceTempList" resultType="com.example.dakudemo.entity.Device">
+        SELECT id,device_id,name,model,inventory_number,repair_number,lend_number,outwarehouse_number,scrap_number,
+               category_id,fund_id,location,amount_unit,create_time,sale_company,product_company,unit_price,description
+        FROM daku.device_temp
+        WHERE 1 = 1
+        <if test="id != null">
+            and id = #{id}
+        </if>
+        <if test="device_id != null and device_id !=''">
+            and device_id = #{device_id}
+        </if>
+        <if test="name != null and name !=''">
+            and name = #{name}
+        </if>
+        <if test="category_id != null and category_id !=''">
+            and category_id = #{category_id}
+        </if>
+        <if test="location != null and location !=''">
+            and location = #{location}
+        </if>
+        <if test="document_id != null and document_id !=''">
+            and document_id = #{document_id}
+        </if>
+        order by create_time desc
+    </select>
+
+    <insert id="translateDeviceTempToDevice" parameterType="String">
+        insert into daku.device(name, model, inventory_number, repair_number, lend_number, outwarehouse_number,
+                                scrap_number, category_id, fund_id, location, amount_unit, create_time, sale_company,
+                                product_company, unit_price, description, device_id)
+        (select name, model, inventory_number, repair_number, lend_number, outwarehouse_number, scrap_number,
+                category_id, fund_id, location, amount_unit, create_time, sale_company, product_company, unit_price,
+                description, device_id
+        from daku.device_temp
+        where device_id = #{device_id} and document_id = #{document_id})
+    </insert>
+</mapper>

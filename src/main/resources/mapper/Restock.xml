@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.dakudemo.mapper.RestockMapper">
+    <insert id="addRestock" parameterType="com.example.dakudemo.entity.Restock" >
+        insert into daku.restock_document(document_id,check_repair_document_id,check_repair_result,
+                                               restock_time,document_person_id, document_status, description) values
+            (
+                #{document_id},
+                #{check_repair_document_id},
+                #{check_repair_result},
+                #{restock_time},
+                #{document_person_id},
+                #{document_status},
+                #{description}
+            )
+    </insert>
+
+    <delete id="deleteRestock" parameterType="Integer">
+        delete from daku.restock_document where id = #{id}
+    </delete>
+
+    <update id="updateRestock" parameterType="com.example.dakudemo.entity.Restock">
+        update daku.restock_document set document_id =#{document_id},check_repair_document_id =#{check_repair_document_id},
+                                              check_repair_result =#{check_repair_result},restock_time =#{restock_time},
+                                              document_person_id =#{document_person_id},document_status=#{document_status},
+                                         description=#{description}
+        where id = #{id}
+    </update>
+    <select id="getRestockList" resultType="com.example.dakudemo.entity.Restock">
+        select * from daku.restock_document
+    </select>
+    <select id="getRestockListParams" resultType="com.example.dakudemo.entity.Restock">
+        select * from daku.restock_document
+        WHERE 1 = 1
+        <if test="id != null">
+            and id = #{id}
+        </if>
+        <if test="document_id != null and document_id !=''">
+            and document_id = #{document_id}
+        </if>
+        <if test="check_repair_document_id != null and check_repair_document_id !=''">
+            and check_repair_document_id = #{check_repair_document_id}
+        </if>
+        <if test="document_person_id != null">
+            and document_person_id = #{document_person_id}
+        </if>
+        <if test="document_status != null">
+            and document_status = #{document_status}
+        </if>
+        order by restock_time desc
+    </select>
+</mapper>

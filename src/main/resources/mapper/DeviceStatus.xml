@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.example.dakudemo.mapper.DeviceStatusMapper">
+    <insert id="addDeviceStatusRecord" parameterType="com.example.dakudemo.entity.DeviceStatusRecord">
+        insert into daku.device_status_record(log_id, device_id, record_details, record_time, record_person_id) values
+        (
+         #{log_id},
+         #{device_id},
+         #{record_details},
+         #{record_time},
+         #{record_person_id}
+        )
+    </insert>
+
+    <delete id="deleteDeviceStatusRecordById" parameterType="Integer">
+        delete from daku.device_status_record where id = #{id}
+    </delete>
+
+    <delete id="deleteDeviceStatusRecordByLogId" parameterType="String">
+        delete from daku.device_status_record where log_id = #{log_id}
+    </delete>
+
+    <update id="updateDeviceStatusRecord" parameterType="com.example.dakudemo.entity.DeviceStatusRecord">
+        update daku.device_status_record set log_id=#{log_id},device_id=#{device_id},record_details=#{record_details},
+                                             record_time=#{record_time},record_person_id=#{record_person_id}
+        where id = #{id}
+    </update>
+
+    <select id="getDeviceStatusRecordById" parameterType="Integer" resultType="com.example.dakudemo.entity.DeviceStatusRecord">
+        select * from daku.device_status_record where id = #{id} order by record_time desc
+    </select>
+
+    <select id="getDeviceStatusRecordListParams" resultType="com.example.dakudemo.entity.DeviceStatusRecord">
+        select * from daku.device_status_record
+        <where>
+            <if test="log_id != null and log_id != ''">
+                log_id = #{log_id}
+            </if>
+            <if test="record_person_id != null">
+                AND record_person_id = #{record_person_id}
+            </if>
+            <if test="device_id != null and device_id != ''">
+                AND device_id = #{device_id}
+            </if>
+        </where>
+        order by record_time desc
+    </select>
+    <select id="getDeviceStatusRecordListParamsAll" resultType="com.example.dakudemo.entity.DeviceStatusRecord">
+        select * from daku.device_status_record order by record_time desc
+    </select>
+
+</mapper>

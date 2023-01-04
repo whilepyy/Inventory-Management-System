@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.dakudemo.mapper.UserMapper">
+
+    <select id="getUserNameById"  resultType="String" parameterType="Integer">
+        SELECT user_name FROM daku.user
+        WHERE id = #{id}
+    </select>
+    <select id="getDisplayNameById"  resultType="String" parameterType="Integer">
+        SELECT displayName FROM daku.user
+        WHERE id = #{id}
+    </select>
+
+
+<select id="getUserByUserName" resultType="com.example.dakudemo.entity.User" parameterType="String">
+        SELECT * FROM daku.user
+        WHERE user_name = #{user_name}
+    </select>
+
+    <insert id="addUser" parameterType="com.example.dakudemo.entity.User">
+        insert into daku.user(user_name, password, displayName, department_id) VALUES
+            (
+                #{user_name},
+                #{password},
+                #{displayName},
+                #{department_id}
+            )
+    </insert>
+
+    <delete id="deleteUserById" parameterType="Integer">
+        delete from daku.user where id = #{id}
+    </delete>
+
+    <update id="updateUserById" parameterType="com.example.dakudemo.entity.User">
+        update daku.user set
+                             user_name = #{user_name}, password = #{password}, displayName=#{displayName},
+                             department_id=#{department_id}
+        where id=#{id}
+    </update>
+
+    <resultMap id="userRolesMap" type="com.example.dakudemo.entity.User">
+        <id column="id" property="id"/>
+        <result column="user_name" property="user_name"/>
+        <!--roles-->
+        <collection property="roles" javaType="list" ofType="com.example.dakudemo.entity.Role">
+            <id column="role_id" property="id"/>
+            <result column="r_name" property="name"/>
+            <result column="system_id" property="system_id"/>
+            <result column="system_name" property="system_name"/>
+            <result column="department_id" property="department_id"/>
+            <result column="department_name" property="department_name"/>
+        </collection>
+    </resultMap>
+
+    <select id="getRolesByUserName" parameterType="String" resultMap="userRolesMap">
+        select u.id, u.user_name, ur.role_id, r.r_name, ur.system_id, s.system_name, ur.department_id, d.department_name from user u
+        inner join daku.user_role_system_department ur on u.id = ur.user_id
+        inner join daku.role r on ur.role_id = r.id
+        inner join daku.system s on ur.system_id = s.id
+        inner join daku.department d on ur.department_id = d.id
+        where user_name = #{user_name}
+    </select>
+
+    <resultMap id="permsMap" type="com.example.dakudemo.entity.Permission">
+        <id column="id" property="id"/>
+        <result column="p_name" property="name"/>
+        <result column="url" property="url"/>
+    </resultMap>
+    <select id="getPermsByRoleId" parameterType="Integer" resultMap="permsMap">
+        select p.id, p.p_name, p.url from permission p
+                                              left join role_permission rp on p.id = rp.permission_id
+        where rp.role_id = #{role_id}
+    </select>
+
+    <resultMap id="urlFiltersMap" type="com.example.dakudemo.entity.UrlFilter">
+        <id column="id" property="id"/>
+        <result column="r_name" property="roleName"/>
+        <result column="p_name" property="permName"/>
+        <result column="url" property="url"/>
+    </resultMap>
+
+    <select id="getAllUrlFilters" resultMap="urlFiltersMap">
+        SELECT rp.`id`,r.`r_name`,p.`p_name`,p.`url` FROM daku.`role_permission` AS rp
+                                                              INNER JOIN daku.`role` AS r ON r.`id` = rp.`role_id`
+                                                              INNER JOIN daku.`permission` AS p ON p.`id` = rp.`permission_id`;
+    </select>
+
+    <insert id="addRoleForUserById">
+        insert into daku.user_role_system_department(user_id, role_id) values
+            (
+                #{user_id},
+                #{role_id}
+            )
+    </insert>
+
+    <select id="getRoleIdByRoleName" parameterType="String" resultType="Integer">
+        select id from role where r_name = #{r_name}
+    </select>
+
+    <select id="getUserIdByUserName" parameterType="String" resultType="Integer">
+        select id from user where user_name = #{user_name}
+    </select>
+
+
+    <select id="getDepartmentIdByDepartmentName" parameterType="String" resultType="Integer">
+        select id from daku.department where department_name = #{department_name}
+    </select>
+
+    <select id="getDepartmentNameByDepartmentId" parameterType="Integer" resultType="String">
+        select department_name from daku.department where id = #{id}
+    </select>
+
+    <insert id="addDepartment" parameterType="String">
+        insert into daku.department(department_name) value (#{department_name})
+    </insert>
+
+    <select id="getDepartmentIdByUserId" parameterType="Integer" resultType="Integer">
+        select department_id from user where id = #{user_id}
+    </select>
+    <select id="getDepartmentIdByDispalyName" parameterType="String" resultType="Integer">
+        select department_id from user where displayName = #{displayName}
+    </select>
+
+    <select id="getSystemIdByUserId" parameterType="Integer" resultType="Integer">
+        select system_id from user_role_system_department where user_id = #{user_id}
+    </select>
+
+    <select id="getUserIdByDisplayName" resultType="Integer">
+        select id from daku.user where displayName = #{displayName}
+    </select>
+
+</mapper>
